@@ -46,11 +46,6 @@ No celular, deslize para os lados.
 8. Desafio da turma (duas perguntas para pensar)
 9. Obrigado!
 
-## Vídeos
-
-Os vídeos do YouTube **só tocam com o site publicado em https** (por exemplo, GitHub Pages). Abrindo o arquivo direto do computador, eles não carregam.
-Anúncios do YouTube não podem ser removidos pelo site.
-
 ## Como editar
 
 Dentro do `index.html`, procure por `VIDEOS` e `TURMAS`:
