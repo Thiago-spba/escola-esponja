@@ -108,9 +108,11 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 @keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,226,154,.8)}100%{box-shadow:0 0 0 60px rgba(255,226,154,0)}}
 
 /* S9 */
-#turmas{position:absolute;left:160px;right:160px;top:610px;display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
-#turmas span{font-size:36px;font-weight:800;color:#06283d;background:#ffe29a;padding:10px 30px;border-radius:40px}
-#turmas span.ph{background:transparent;color:#c9f3ff;border:3px dashed rgba(255,255,255,.6);font-weight:600}
+#turmas{position:absolute;left:160px;right:160px;top:610px;display:flex;flex-direction:column;align-items:center;gap:14px}
+#turmas span{font-size:36px;font-weight:800;color:#06283d;background:#ffe29a;padding:10px 30px;border-radius:40px;opacity:0;transform:translateY(28px);animation:turmaIn .7s ease forwards}
+#turmas span:nth-child(2){animation-delay:.45s}
+#turmas span.ph{background:transparent;color:#c9f3ff;border:3px dashed rgba(255,255,255,.6);font-weight:600;opacity:1;transform:none;animation:none}
+@keyframes turmaIn{to{opacity:1;transform:translateY(0)}}
 .profs{position:absolute;left:0;right:0;top:712px;text-align:center;font-size:36px;color:#fff;font-weight:700}
 .profs em{font-style:normal;color:#8ff0a4}
 .banner{position:absolute;left:110px;top:790px;width:1700px;height:250px;border-radius:26px;background-image:var(--mural);background-size:1700px auto;background-position:50% 52%;border:6px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.5)}
@@ -282,7 +284,7 @@ const VIDEOS=[
   {id:'ihYQjDn7WPg',tag:'Explicação',titulo:'O que são cidades-esponja?'}
 ];
 /* seus links antigos, se quiser usar: A5HDIMb6e7Q  BSZ94C4Y9zU */
-const TURMAS=[]; // exemplo: ['1ª série','2ª série','3ª série']
+const TURMAS=['Culminância Eletivas · Futurismo','Ensino Fundamental e Médio'];
 /* ======================== */
 const CAMADAS=[
  ['Vegetação','#5cb85c','Plantas que seguram a água da chuva e refrescam o ar.'],
