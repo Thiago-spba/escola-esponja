@@ -123,6 +123,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 #dots i.on{background:#ffe29a;transform:scale(1.5)}
 #ctl{position:fixed;right:14px;bottom:14px;display:flex;gap:10px;z-index:50;opacity:0;transition:opacity .4s}
 #ctl.vis{opacity:1}
+body.cover #ctl{opacity:1}
 #ctl button{font:inherit;width:56px;height:56px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:26px;cursor:pointer}
 #autoPanel{position:fixed;right:14px;bottom:84px;background:rgba(0,0,0,.85);border-radius:16px;padding:12px 16px;display:none;flex-direction:column;gap:8px;z-index:51;min-width:120px}
 #autoPanel.vis{display:flex}
@@ -147,7 +148,7 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 .vcard .pfoot svg{width:22px;height:22px}
 </style>
 </head>
-<body>
+<body class="cover">
 <div id="app">
 <div id="stage">
   <div id="bubbles"></div>
@@ -423,7 +424,7 @@ function playIntro(){const s=$('s1');s.classList.remove('open','lit');['r0','r1'
  later(()=>$('r1').classList.add('show'),4900);
  later(()=>$('r2').classList.add('show'),6200);
  later(()=>{$('r3').classList.add('show');if(AC)fanfare(AC.currentTime)},7800);
- later(()=>{$('r4').classList.add('show');introDone=true},9600)}
+ later(()=>{$('r4').classList.add('show');introDone=true;if(typeof resetAutoTimer==='function')resetAutoTimer()},9600)}
 function stopIntro(){introTimers.forEach(clearTimeout);introTimers=[];introDone=true;musicFade(.5,1)}
 
 /* ====== NAVEGAÇÃO ====== */
@@ -468,16 +469,16 @@ function next(){if(!started)return;
 function prev(){if(!started)return;
  if(step>0){step--;applyStep();return}
  if(cur>1){const p=cur-1;go(p,S[p].steps)}}
-function begin(){if(started)return;started=true;if(!AC){audioInit();startMusic()}else if(typeof duck==='function')duck(false);$('rot').classList.remove('on');go(1,0,true)}
+function begin(){if(started)return;started=true;document.body.classList.remove('cover');if(!AC){audioInit();startMusic()}else if(typeof duck==='function')duck(false);$('rot').classList.remove('on');go(1,0,true)}
 $('btnStart').onclick=begin;
 /* auto-advance */
 let autoDelay=0,autoTimer=null;
-function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0)autoTimer=setInterval(()=>{if(cur<S.length-1)go(cur+1,0)},autoDelay*1000)}
+function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0&&started&&introDone)autoTimer=setInterval(()=>{if(cur<S.length-1)go(cur+1,0)},autoDelay*1000)}
 function setAuto(sec){autoDelay=sec;document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));$('bAuto').classList.toggle('on',sec>0);resetAutoTimer()}
 $('bAuto').onclick=function(){$('autoPanel').classList.toggle('vis')};
 document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis')});
 
-$('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;go(0,0)};
+$('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;document.body.classList.add('cover');clearInterval(autoTimer);autoTimer=null;go(0,0)};
 
 /* entrada do usuário */
 $('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;if(ctlVisible){hideCtl();ctlVisible=false;return}const x=e.clientX/innerWidth;x<.25?prev():next()});
