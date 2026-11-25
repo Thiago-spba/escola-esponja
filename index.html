@@ -472,7 +472,7 @@ function begin(){if(started)return;started=true;if(!AC){audioInit();startMusic()
 $('btnStart').onclick=begin;
 /* auto-advance */
 let autoDelay=0,autoTimer=null;
-function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0)autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,0)},autoDelay*1000)}
+function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0)autoTimer=setInterval(()=>{if(cur<S.length-1)go(cur+1,0)},autoDelay*1000)}
 function setAuto(sec){autoDelay=sec;document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));$('bAuto').classList.toggle('on',sec>0);resetAutoTimer()}
 $('bAuto').onclick=function(){$('autoPanel').classList.toggle('vis')};
 document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis')});
