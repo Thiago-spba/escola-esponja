@@ -124,6 +124,11 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 #ctl{position:fixed;right:14px;bottom:14px;display:flex;gap:10px;z-index:50;opacity:0;transition:opacity .4s}
 #ctl.vis{opacity:1}
 #ctl button{font:inherit;width:56px;height:56px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:26px;cursor:pointer}
+#autoPanel{position:fixed;right:14px;bottom:84px;background:rgba(0,0,0,.85);border-radius:16px;padding:12px 16px;display:none;flex-direction:column;gap:8px;z-index:51;min-width:120px}
+#autoPanel.vis{display:flex}
+#autoPanel button{width:100%;height:40px;border-radius:10px;font-size:18px;font-weight:700;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;transition:background .2s}
+#autoPanel button.on{background:#1b9aaa;color:#fff}
+#bAuto.on{background:rgba(27,154,170,.8)}
 #rot{position:fixed;left:0;right:0;bottom:22px;text-align:center;color:#ffe29a;font-size:18px;z-index:60;display:none;pointer-events:none}
 @media (orientation:portrait){#rot.on{display:block}}
 .vgrid{position:absolute;left:120px;top:200px;width:1680px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:40px 50px}
@@ -264,7 +269,16 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 </div>
 </div>
 
+<div id="autoPanel" data-nonav>
+  <button data-sec="0" class="on">Manual</button>
+  <button data-sec="5">5s</button>
+  <button data-sec="10">10s</button>
+  <button data-sec="15">15s</button>
+  <button data-sec="20">20s</button>
+  <button data-sec="30">30s</button>
+</div>
 <div id="ctl" data-nonav>
+  <button id="bAuto" title="Avanço automático">⚙️</button>
   <button id="bHome" title="Início">🏠</button>
   <button id="bPrev" title="Voltar">◀</button>
   <button id="bNext" title="Avançar">▶</button>
@@ -328,7 +342,7 @@ function setRain(on){if(on){rainOn=true;rc.style.opacity=1}else{rc.style.opacity
  for(let i=0;i<5;i++){h+=`<circle cx="${560+i*80}" cy="230" r="9"><animate attributeName="cy" values="226;420" dur="${2+i*.25}s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;1;0" dur="${2+i*.25}s" repeatCount="indefinite"/></circle>`}
  h+=`</g><g fill="none" stroke="#8ad0ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="26 18"><path d="M440 182 H20"><animate attributeName="stroke-dashoffset" values="0;-44" dur=".7s" repeatCount="indefinite"/></path></g>`;
  h+=`<text x="230" y="150" text-anchor="middle" font-size="30" font-weight="700" fill="#cfefff">a água escorre</text><text x="730" y="480" text-anchor="middle" font-size="30" font-weight="700" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;1" begin="0s" dur="1s" fill="freeze"/>a terra absorve</text></g>`;
- h+=`<g class="gh" data-s="2"><rect x="500" y="520" width="460" height="96" rx="14" fill="#3fa0e6" opacity=".85"/><text x="730" y="580" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">água guardada</text></g>`;
+ h+=`<g class="gh" data-s="2"><rect x="500" y="520" width="460" height="96" rx="14" fill="#3fa0e6" opacity=".85"/><text x="730" y="580" text-anchor="middle" font-size="30" font-weight="800" fill="#fff">água armazenada</text></g>`;
  s.innerHTML=h})();
 
 /* SVG: chuva e setas no desenho (S5) */
@@ -456,6 +470,22 @@ function prev(){if(!started)return;
  if(cur>1){const p=cur-1;go(p,S[p].steps)}}
 function begin(){if(started)return;started=true;if(!AC){audioInit();startMusic()}else if(typeof duck==='function')duck(false);$('rot').classList.remove('on');go(1,0,true)}
 $('btnStart').onclick=begin;
+/* auto-advance */
+let autoDelay=0,autoTimer=null;
+function setAuto(sec){
+  clearInterval(autoTimer);autoTimer=null;autoDelay=sec;
+  document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));
+  $('bAuto').classList.toggle('on',sec>0);
+  if(sec>0)autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,1)},sec*1000);
+}
+$('bAuto').onclick=function(){$('autoPanel').classList.toggle('vis')};
+document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){
+  setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis');
+});
+/* reinicia timer ao navegar manualmente */
+const _go=go;
+go=function(n,d){_go(n,d);if(autoDelay>0){clearInterval(autoTimer);autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,1)},autoDelay*1000);}};
+
 $('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;go(0,0)};
 
 /* entrada do usuário */
