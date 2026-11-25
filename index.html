@@ -460,7 +460,7 @@ function enter(i,fromStart){const id=S[i].id;
  if(id==='s9'){}
 }
 function go(i,st,fromStart){const old=cur;$(S[old].id).classList.remove('on');if(old===1&&i!==1&&!introDone)stopIntro(),introFinal();
- cur=i;step=st;const el=$(S[cur].id);el.classList.add('on');applyStep();enter(i,fromStart)}
+ cur=i;step=st;const el=$(S[cur].id);el.classList.add('on');applyStep();enter(i,fromStart);if(typeof resetAutoTimer==='function')resetAutoTimer()}
 function next(){if(!started)return;
  if(cur===1&&!introDone){stopIntro();introFinal();go(2,0);return}
  if(step<S[cur].steps){step++;pop();applyStep();return}
@@ -472,24 +472,15 @@ function begin(){if(started)return;started=true;if(!AC){audioInit();startMusic()
 $('btnStart').onclick=begin;
 /* auto-advance */
 let autoDelay=0,autoTimer=null;
-function setAuto(sec){
-  clearInterval(autoTimer);autoTimer=null;autoDelay=sec;
-  document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));
-  $('bAuto').classList.toggle('on',sec>0);
-  if(sec>0)autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,1)},sec*1000);
-}
+function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0)autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,0)},autoDelay*1000)}
+function setAuto(sec){autoDelay=sec;document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));$('bAuto').classList.toggle('on',sec>0);resetAutoTimer()}
 $('bAuto').onclick=function(){$('autoPanel').classList.toggle('vis')};
-document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){
-  setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis');
-});
-/* reinicia timer ao navegar manualmente */
-const _go=go;
-go=function(n,d){_go(n,d);if(autoDelay>0){clearInterval(autoTimer);autoTimer=setInterval(()=>{if(cur<SLIDES.length-1)go(cur+1,1)},autoDelay*1000);}};
+document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis')});
 
 $('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;go(0,0)};
 
 /* entrada do usuário */
-$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;const x=e.clientX/innerWidth;x<.25?prev():next()});
+$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;if(ctlVisible){hideCtl();ctlVisible=false;return}const x=e.clientX/innerWidth;x<.25?prev():next()});
 addEventListener('keydown',e=>{
   const k=e.key;
  if(!started){if(k==='Enter'||k===' '){e.preventDefault();begin()}return}
@@ -511,8 +502,13 @@ $('app').addEventListener('touchend',e=>{if(tx0==null)return;const dx=e.changedT
 /* controles */
 function toggleFull(){const d=document;if(!d.fullscreenElement){(d.documentElement.requestFullscreen||d.documentElement.webkitRequestFullscreen||function(){}).call(d.documentElement)}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d)}}
 $('bPrev').onclick=prev;$('bNext').onclick=next;$('bMute').onclick=()=>setMute(!muted);$('bFull').onclick=toggleFull;
-let ctlT;function showCtl(){$('ctl').classList.add('vis');clearTimeout(ctlT);ctlT=setTimeout(()=>$('ctl').classList.remove('vis'),2800)}
-addEventListener('mousemove',showCtl);addEventListener('touchstart',showCtl,{passive:true});
+function hideCtl(){$('ctl').classList.remove('vis');$('autoPanel').classList.remove('vis')}
+function showCtl(){$('ctl').classList.add('vis')}
+/* ícones: aparecem ao clicar, somem ao clicar de novo */
+let ctlVisible=false;
+function toggleCtl(){ctlVisible=!ctlVisible;ctlVisible?showCtl():hideCtl()}
+addEventListener('mousemove',()=>{if(!ctlVisible){showCtl();hideTimeout()}});
+let _hT;function hideTimeout(){clearTimeout(_hT);_hT=setTimeout(()=>{if(!ctlVisible)hideCtl()},2500)}
 </script>
 </body>
 </html>
