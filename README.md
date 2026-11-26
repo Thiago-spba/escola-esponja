@@ -36,7 +36,16 @@ No celular, deslize para os lados.
 
 ## Ver em 3D / óculos
 
-Na tela inicial, o botão **Ver em 3D / óculos** abre o `vr.html`: o telhado verde em 3D, com as 8 camadas que se separam, chuva e **modo óculos** (celular na tela dividida, escolha olhando para o botão).
+Na tela inicial, o botão **🥽 Ver em 3D / óculos** abre o `vr.html`: o telhado verde em 3D, em um único arquivo HTML.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Thiago-spba/escola-esponja/master/assets/preview-3d.gif" alt="Telhado verde em 3D: camadas se separando e chuva" width="80%">
+</p>
+
+- **Arraste** para girar e **toque em uma camada** para ver o que ela faz.
+- **Separar camadas** abre as 8 camadas, uma acima da outra.
+- **Chover** mostra a água passando pelas camadas e saindo pelo cano.
+- **Modo óculos**: coloque o celular de lado no óculos e escolha **olhando para o botão** por cerca de 1,5 s. No computador, arraste ou use as setas para olhar e clique para escolher. `Esc` sai.
 
 ## Os slides
 
