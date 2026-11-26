@@ -476,7 +476,7 @@ $('btnStart').onclick=begin;
 /* auto-advance */
 let autoDelay=0,autoTimer=null,autoPaused=false;
 function resetAutoTimer(){clearInterval(autoTimer);autoTimer=null;if(autoDelay>0&&started&&introDone&&!autoPaused)autoTimer=setInterval(()=>{if(cur<S.length-1||step<S[cur].steps)next()},autoDelay*1000)}
-function togglePause(){if(autoDelay<=0||!started||!introDone)return false;autoPaused=!autoPaused;$('pauseInd').classList.toggle('on',autoPaused);resetAutoTimer();return true}
+function togglePause(){if(autoDelay<=0||!started)return false;autoPaused=!autoPaused;$('pauseInd').classList.toggle('on',autoPaused);resetAutoTimer();return true}
 function setAuto(sec){autoDelay=sec;autoPaused=false;$('pauseInd').classList.remove('on');document.querySelectorAll('#autoPanel button').forEach(b=>b.classList.toggle('on',+b.dataset.sec===sec));$('bAuto').classList.toggle('on',sec>0);resetAutoTimer()}
 $('bAuto').onclick=function(){$('autoPanel').classList.toggle('vis')};
 document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){setAuto(+this.dataset.sec);$('autoPanel').classList.remove('vis')});
