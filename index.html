@@ -484,7 +484,7 @@ document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){s
 $('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;document.body.classList.add('cover');clearInterval(autoTimer);autoTimer=null;autoPaused=false;$('pauseInd').classList.remove('on');go(0,0)};
 
 /* entrada do usuário */
-$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;const x=e.clientX/innerWidth;x<.25?prev():next()});
+$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;if(togglePause())return;const x=e.clientX/innerWidth;x<.25?prev():next()});
 addEventListener('keydown',e=>{
   const k=e.key;
  if(!started){if(k==='Enter'||k===' '){e.preventDefault();begin()}return}
