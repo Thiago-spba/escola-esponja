@@ -121,9 +121,8 @@ html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:"Tr
 #dots{position:absolute;left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:14px;transition:opacity .6s}
 #dots i{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .4s}
 #dots i.on{background:#ffe29a;transform:scale(1.5)}
-#ctl{position:fixed;right:14px;bottom:14px;display:flex;gap:10px;z-index:50;opacity:0;transition:opacity .4s}
-#ctl.vis{opacity:1}
-body.cover #ctl{opacity:1}
+#ctl{position:fixed;right:14px;bottom:14px;display:flex;gap:10px;z-index:50;opacity:1}
+body:not(.cover) #ctl button:not(#bHome){display:none}
 #ctl button{font:inherit;width:56px;height:56px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:26px;cursor:pointer}
 #autoPanel{position:fixed;right:14px;bottom:84px;background:rgba(0,0,0,.85);border-radius:16px;padding:12px 16px;display:none;flex-direction:column;gap:8px;z-index:51;min-width:120px}
 #autoPanel.vis{display:flex}
@@ -470,7 +469,7 @@ function next(){if(!started)return;
 function prev(){if(!started)return;
  if(step>0){step--;applyStep();return}
  if(cur>1){const p=cur-1;go(p,S[p].steps)}}
-function begin(){if(started)return;started=true;document.body.classList.remove('cover');if(!AC){audioInit();startMusic()}else if(typeof duck==='function')duck(false);$('rot').classList.remove('on');go(1,0,true)}
+function begin(){if(started)return;started=true;document.body.classList.remove('cover');$('autoPanel').classList.remove('vis');if(!AC){audioInit();startMusic()}else if(typeof duck==='function')duck(false);$('rot').classList.remove('on');go(1,0,true)}
 $('btnStart').onclick=begin;
 /* auto-advance */
 let autoDelay=0,autoTimer=null;
@@ -482,7 +481,7 @@ document.querySelectorAll('#autoPanel button').forEach(b=>b.onclick=function(){s
 $('bHome').onclick=function(){stopIntro();const s1=$('s1');s1.classList.remove('open','lit');['r0','r1','r2','r3','r4'].forEach(i=>$(i).classList.remove('show'));introDone=false;started=false;document.body.classList.add('cover');clearInterval(autoTimer);autoTimer=null;go(0,0)};
 
 /* entrada do usuário */
-$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;if(ctlVisible){hideCtl();ctlVisible=false;return}const x=e.clientX/innerWidth;x<.25?prev():next()});
+$('app').addEventListener('click',e=>{if(e.target.closest('[data-nonav]'))return;if(!started)return;const x=e.clientX/innerWidth;x<.25?prev():next()});
 addEventListener('keydown',e=>{
   const k=e.key;
  if(!started){if(k==='Enter'||k===' '){e.preventDefault();begin()}return}
@@ -504,13 +503,6 @@ $('app').addEventListener('touchend',e=>{if(tx0==null)return;const dx=e.changedT
 /* controles */
 function toggleFull(){const d=document;if(!d.fullscreenElement){(d.documentElement.requestFullscreen||d.documentElement.webkitRequestFullscreen||function(){}).call(d.documentElement)}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d)}}
 $('bPrev').onclick=prev;$('bNext').onclick=next;$('bMute').onclick=()=>setMute(!muted);$('bFull').onclick=toggleFull;
-function hideCtl(){$('ctl').classList.remove('vis');$('autoPanel').classList.remove('vis')}
-function showCtl(){$('ctl').classList.add('vis')}
-/* ícones: aparecem ao clicar, somem ao clicar de novo */
-let ctlVisible=false;
-function toggleCtl(){ctlVisible=!ctlVisible;ctlVisible?showCtl():hideCtl()}
-addEventListener('mousemove',()=>{if(!ctlVisible){showCtl();hideTimeout()}});
-let _hT;function hideTimeout(){clearTimeout(_hT);_hT=setTimeout(()=>{if(!ctlVisible)hideCtl()},2500)}
 </script>
 </body>
 </html>
