@@ -38,7 +38,7 @@ body.vr .ui{display:none!important}
 <div id="prep">
   <div class="k">Modo óculos</div>
   <div class="t">Vire o celular de lado<br>e coloque no óculos</div>
-  <div class="s">Olhe para um botão ou uma camada por alguns segundos para escolher. Para sair, olhe para baixo e escolha <b>Sair</b>.</div>
+  <div class="s">Olhe para um botão ou uma camada por alguns segundos para escolher. Para sair, olhe para baixo e escolha <b>Sair</b>.<br>No computador: arraste (ou use as setas) para olhar e clique para escolher.</div>
   <div id="prepN">6</div>
   <div class="s">Toque na tela para começar agora</div>
 </div>
@@ -4594,9 +4594,10 @@ $('bVR').onclick = function () { enterVR(); };
 var ray = new T.Raycaster(), ndc = new T.Vector2(), down = null;
 canvas.addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
 canvas.addEventListener('pointerup', function (e) {
-  if (!down || vrOn) return;
+  if (!down) return;
   var moved = Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y), dt = performance.now() - down.t; down = null;
   if (moved > 8 || dt > 600) return;
+  if (vrOn) { activate(gaze.obj); gaze.cool = 0.6; return; } /* no computador: clicar escolhe o que está na mira */
   ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   ray.setFromCamera(ndc, camera);
   var hit = ray.intersectObjects(layerMeshes, false)[0];
@@ -4615,9 +4616,9 @@ function btnTex(label, on) {
   g.fillText(label, 256, 80, 460);
   var t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; return t;
 }
-function makeBtn(key, x, label, fn) {
+function makeBtn(key, x, y, label, fn) {
   var m = new T.Mesh(new T.PlaneGeometry(1.8, 0.53), new T.MeshBasicMaterial({ map: btnTex(label, false), transparent: true }));
-  m.position.set(x, -2.7, 2.0); m.rotation.x = -0.56; m.visible = false; m.userData.btn = key;
+  m.position.set(x, y, 2.0); m.rotation.x = -0.56; m.visible = false; m.userData.btn = key;
   scene.add(m); btn3d[key] = { mesh: m, fn: fn, label: label, on: false }; btnList.push(m);
 }
 function refreshBtn(b) {
@@ -4626,10 +4627,10 @@ function refreshBtn(b) {
   var on = b === btn3d.sep ? !!explodeTarget : b === btn3d.rain ? rainOn : false;
   b.mesh.material.map.dispose(); b.mesh.material.map = btnTex(lab, on); b.mesh.material.needsUpdate = true;
 }
-makeBtn('sep', -2.9, 'Separar camadas', toggleExplode);
-makeBtn('rain', -0.97, 'Chover', toggleRain);
-makeBtn('cent', 0.97, 'Centralizar', function () { needCenter = true; });
-makeBtn('exit', 2.9, 'Sair', function () { exitVR(); });
+makeBtn('sep', -1.0, -2.45, 'Separar camadas', toggleExplode);
+makeBtn('rain', 1.0, -2.45, 'Chover', toggleRain);
+makeBtn('cent', -1.0, -3.15, 'Centralizar', function () { needCenter = true; });
+makeBtn('exit', 1.0, -3.15, 'Sair', function () { exitVR(); });
 
 /* mira (bolinha + anel que enche) */
 var reticle = new T.Group(); reticle.position.set(0, 0, -3); camera.add(reticle);
@@ -4679,10 +4680,11 @@ function updateGaze(dt) {
   if (!obj || gaze.cool > 0) { if (gaze.t) setProgress(0); gaze.t = 0; return; }
   var need = obj.userData.btn ? DWELL_BTN : DWELL_LAYER;
   gaze.t += dt; setProgress(gaze.t / need);
-  if (gaze.t >= need) {
-    gaze.t = 0; gaze.cool = 0.9; setProgress(0);
-    if (obj.userData.btn) btn3d[obj.userData.btn].fn(); else setSel(sel === obj.userData.layer ? -1 : obj.userData.layer);
-  }
+  if (gaze.t >= need) { gaze.t = 0; gaze.cool = 0.9; setProgress(0); activate(obj); }
+}
+function activate(obj) {
+  if (!obj) return;
+  if (obj.userData.btn) btn3d[obj.userData.btn].fn(); else setSel(sel === obj.userData.layer ? -1 : obj.userData.layer);
 }
 
 var prepTimer = null;
@@ -4721,7 +4723,14 @@ function exitVR() {
   resize();
 }
 document.addEventListener('fullscreenchange', function () { if (vrOn && !document.fullscreenElement) exitVR(); });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && vrOn) exitVR(); });
+document.addEventListener('keydown', function (e) {
+  if (!vrOn) return;
+  if (e.key === 'Escape') { exitVR(); return; }
+  if (e.key === 'Enter' || e.key === ' ') { activate(gaze.obj); e.preventDefault(); return; }
+  if (devOri.has) return;
+  if (e.key === 'ArrowLeft') fbYaw += 0.06; else if (e.key === 'ArrowRight') fbYaw -= 0.06;
+  else if (e.key === 'ArrowUp') fbPitch = Math.min(1.2, fbPitch + 0.06); else if (e.key === 'ArrowDown') fbPitch = Math.max(-1.2, fbPitch - 0.06);
+});
 
 /* ---------- tamanho da tela e câmera ---------- */
 var lastPortrait = null;
