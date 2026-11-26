@@ -47,6 +47,19 @@ Na tela inicial, o botão **🥽 Ver em 3D / óculos** abre o `vr.html`: o telha
 - **Chover** mostra a água passando pelas camadas e saindo pelo cano.
 - **Modo óculos**: coloque o celular de lado no óculos e escolha **olhando para o botão** por cerca de 1,5 s. No computador, arraste ou use as setas para olhar e clique para escolher. `Esc` sai.
 
+## Entrar na cidade (360°)
+
+Na tela inicial, o botão **🏙 Entrar na cidade (360°)** abre o `cidade.html`: o aluno fica no meio da rua e olha em volta, na tela ou no óculos.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Thiago-spba/escola-esponja/master/assets/preview-cidade.gif" alt="Cidade comum x Cidade Esponja e viagem de gota" width="80%">
+</p>
+
+- **Cidade comum:** com chuva, a água sobe na rua, o bueiro transborda e o calor aumenta.
+- **Cidade Esponja:** a mesma rua com árvores, jardins e telhados verdes: a água é absorvida e fica mais fresco.
+- **Virar uma gota:** desce pelas 8 camadas do telhado verde, com explicação em cada uma.
+- **Modo óculos:** olhe para um botão por cerca de 1,5 s. No computador, arraste (ou use as setas) e clique. `Esc` sai.
+
 ## Os slides
 
 1. Cortina e abertura com nomes e projeto
