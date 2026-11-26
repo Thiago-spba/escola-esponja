@@ -72,18 +72,6 @@ Na tela inicial, o botão **🏙 Entrar na cidade (360°)** abre o `cidade.html`
 8. Desafio da turma (duas perguntas para pensar)
 9. Obrigado!
 
-## Como editar
-
-Dentro do `index.html`, procure por `VIDEOS` e `TURMAS`:
-
-```js
-const VIDEOS=[
-  {id:'_RLUUr9-cnY',titulo:'Como funciona uma cidade-esponja'},
-  // troque o id pelo final do link do YouTube
-];
-const TURMAS=[]; // ex.: ['1ª série','2ª série']
-```
-
 ## Publicar (GitHub Pages)
 
 `Settings` → `Pages` → *Deploy from a branch* → `master` / `root`.
