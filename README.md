@@ -34,6 +34,10 @@ Ela mostra por que a cidade alaga e esquenta, como a **Cidade Esponja** ajuda e 
 
 No celular, deslize para os lados.
 
+## Ver em 3D / óculos
+
+Na tela inicial, o botão **Ver em 3D / óculos** abre o `vr.html`: o telhado verde em 3D, com as 8 camadas que se separam, chuva e **modo óculos** (celular na tela dividida, escolha olhando para o botão).
+
 ## Os slides
 
 1. Cortina e abertura com nomes e projeto
